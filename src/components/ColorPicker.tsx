@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
 import { EyeDropper } from './icons/EyeDropper';
 
 interface ColorPickerProps {
@@ -30,7 +31,6 @@ export function ColorPicker({ label, color, onChange, imageRef, onActivate, isAc
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     
-    // Scale coordinates to match original image dimensions
     const scaleX = img.naturalWidth / rect.width;
     const scaleY = img.naturalHeight / rect.height;
     
@@ -51,19 +51,30 @@ export function ColorPicker({ label, color, onChange, imageRef, onActivate, isAc
 
   return (
     <div className="flex items-center justify-between">
-      <span className="text-2xl font-normal text-gray-900">{label}</span>
-      <div className={`flex items-center gap-2 rounded-full ${isActive ? 'ring-2 ring-blue-500' : 'ring-1 ring-gray-200'} px-2 py-1`}>
+      <span className="text-lg font-medium">{label}</span>
+      <div 
+        className={`flex items-center p-1 rounded-full border transition-colors ${
+          isActive 
+            ? 'bg-background border-zinc-700' 
+            : 'bg-background border-zinc-300 hover:border-zinc-500 hover:bg-zinc-50'
+        }`}
+      >
         <div
-          className="w-8 h-8 rounded-full"
+          className="w-6 h-6 rounded-full m-1"
           style={{ backgroundColor: color }}
         />
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={() => onActivate(!isActive)}
-          className={`p-2 rounded-full transition-colors ${isActive ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100 text-gray-600'}`}
-          aria-label="Pick color"
+          className={`rounded-full h-8 w-8 mr-1 ${
+            isActive 
+              ? 'text-zinc-700 hover:text-zinc-700 hover:bg-transparent' 
+              : 'text-foreground/70 hover:text-foreground hover:bg-transparent'
+          }`}
         >
-          <EyeDropper className="w-5 h-5" />
-        </button>
+          <EyeDropper className="w-8 h-8" />
+        </Button>
       </div>
     </div>
   );

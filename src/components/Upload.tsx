@@ -1,5 +1,9 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Upload as UploadIcon } from "lucide-react";
 
 interface UploadProps {
   onUploadSuccess: (imageUrl: string) => void;
@@ -8,6 +12,7 @@ interface UploadProps {
 export const Upload = ({ onUploadSuccess }: UploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -15,6 +20,7 @@ export const Upload = ({ onUploadSuccess }: UploadProps) => {
 
     setIsUploading(true);
     setUploadError(null);
+    setUploadProgress(0);
 
     try {
       const formData = new FormData();
@@ -30,6 +36,7 @@ export const Upload = ({ onUploadSuccess }: UploadProps) => {
       }
 
       const data = await response.json();
+      setUploadProgress(100);
       onUploadSuccess(data.url);
     } catch (error) {
       setUploadError(error instanceof Error ? error.message : 'Upload failed');
@@ -47,33 +54,46 @@ export const Upload = ({ onUploadSuccess }: UploadProps) => {
   });
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-4">Upload Your Photo</h1>
-      <p className="text-gray-600 mb-6">
-        Upload an image to analyze its colors and get style recommendations
-      </p>
-
-      <div
-        {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
-          ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}`}
-      >
-        <input {...getInputProps()} />
-        {isUploading ? (
-          <p className="text-gray-600">Uploading...</p>
-        ) : isDragActive ? (
-          <p className="text-blue-500">Drop the image here</p>
-        ) : (
-          <div>
-            <p className="text-gray-600">Drag and drop an image here, or click to select</p>
-            <p className="text-sm text-gray-500 mt-2">Supports JPG, PNG, GIF, and WebP</p>
+    <Card className="max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle>Upload Your Photo</CardTitle>
+        <CardDescription>
+          Upload an image to analyze its colors and get style recommendations
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div
+          {...getRootProps()}
+          className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all
+            ${isDragActive 
+              ? 'border-primary bg-primary/5' 
+              : 'border-muted hover:border-muted-foreground/50'}`}
+        >
+          <input {...getInputProps()} />
+          <div className="flex flex-col items-center gap-2">
+            <UploadIcon className={`w-10 h-10 ${isDragActive ? 'text-primary' : 'text-muted-foreground'}`} />
+            {isUploading ? (
+              <div className="w-full space-y-2">
+                <p className="text-sm text-muted-foreground">Uploading...</p>
+                <Progress value={uploadProgress} className="w-full" />
+              </div>
+            ) : isDragActive ? (
+              <p className="text-primary">Drop the image here</p>
+            ) : (
+              <div>
+                <p className="text-muted-foreground">Drag and drop an image here, or click to select</p>
+                <p className="text-sm text-muted-foreground/70 mt-2">Supports JPG, PNG, GIF, and WebP</p>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </div>
 
-      {uploadError && (
-        <p className="text-red-500 mt-4">{uploadError}</p>
-      )}
-    </div>
+        {uploadError && (
+          <Alert variant="destructive" className="mt-4">
+            <AlertDescription>{uploadError}</AlertDescription>
+          </Alert>
+        )}
+      </CardContent>
+    </Card>
   );
 }; 
