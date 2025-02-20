@@ -1,9 +1,41 @@
 ---
-description:
-globs:
+description: 
+globs: 
 ---
+# Color Analysis Product Requirements Document
 
-# Your rule content
+## Introduction
+The goal of this product is to make it easy for someone to upload a photo and get a personalized color analysis. This helps them to pick colors for outfits and accessories that work best for them. 
 
-- You can @ files here
-- You can use markdown but dont have to
+## Key User Flow
+1. User uploads a photo. 
+2. User picks colors from the photo for hair color, eye color, and skin tone. 
+3. User gets an analysis of what their color season is and the best colors for them. 
+
+## Page Structure
+- Single page with three components for each step in the user flow. 
+
+## Components
+**Component 1: Upload**
+- Header
+- Short description
+- File input that can be clicked or have a file dragged onto it. Only accepts image file types. 
+- Action: after a file is input, it uploads the file to supabase storage via the api/upload-image route. 
+
+**Compontent 2: Color Selection**
+- Header
+- Short description
+- Display image that was uploaded
+- 3 color pickers for hair color, eye color, and skin tone. (each sub component)
+- Button "Get my analysis"
+- Action: when button is clicked, color analysis is kicked off via api/analyze-color route and go to next step
+
+**Sub-Component: Color Picker**
+- Simple card
+
+**Component 3: Color Analysis**
+- Header
+- Short description
+- Display image that was uploaded
+- Overlay colors from color analysis at bottom portion of photo. 
+- Short description of color analysis. 
